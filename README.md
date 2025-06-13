@@ -1,55 +1,40 @@
-# React + TypeScript + Vite
+## 📬 Project Overview: Phishing Link Detector
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a lightweight web app built with **React + TypeScript** that helps users identify potentially dangerous links in messages (emails, texts, DMs, etc.).
 
-Currently, two official plugins are available:
+🔍 Paste any message into the input box, and the app will:
+- Extract all visible `http://` or `https://` links
+- Analyze each one using phishing heuristics
+- Display a summary of risk indicators for each link
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+---
 
-## Expanding the ESLint configuration
+## ✅ What It Detects
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Each link is analyzed using custom logic to flag two key phishing risk signals:
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+| Heuristic | Description |
+|----------|-------------|
+| ⚠️ **Shortened Link** | Links using common shortening services like `bit.ly`, `t.co`, `tinyurl.com`, which are often used to mask malicious destinations |
+| 🚩 **Suspicious TLD** | Domains that end in high-risk extensions such as `.xyz`, `.zip`, `.click`, `.monster`, etc., which are frequently used in phishing scams |
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🧠 How Results Are Calculated
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
-# Phishing-Link-Detector
+No AI model is used yet — just smart logic.
+
+Each URL is parsed using JavaScript’s `URL` constructor and evaluated against:
+- A list of known **URL shortener domains**
+- A list of suspicious or uncommon **top-level domains (TLDs)**
+
+Each result is returned with flags like:
+
+```json
+{
+  "url": "https://bit.ly/login-now",
+  "flags": {
+    "isShortener": true,
+    "hasSuspiciousTLD": false
+  }
+}
